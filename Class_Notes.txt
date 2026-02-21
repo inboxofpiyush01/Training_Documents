@@ -2414,3 +2414,281 @@ Next :
 		
 		Deployment of Kubernetes 
 			
+
+
+
+
+#########################
+Day - 7 | 21st Feb. 2026
+#########################	
+
+
+	- ML Project --> Overview 
+	
+	- DVC/MLFlow/Streamlit/Fast-API
+	
+	- Create - AWS S3 Bucket	# To maintain the Dataset & Metadata
+	
+	- Docker Cli & DockerHub 
+	
+	- Kubernetes -
+	
+	- Github :
+	
+		- Maintain the ML Project Source Code 
+		
+		- github-actions --> Enable CICD 
+		
+		
+	Enviroments :
+	
+		-> Dev Enviroment -> IDE - VSCode / Editor
+		
+		-> Build Enviroment -> Build ML Project -> Docker Images -> Publish to DockerHub
+		
+		-> Target Enviroments : ==> Kubernetes Cluster
+		
+			- UAT	 
+			
+			- Prod Enviroments
+			
+	
+	Dataset Management :
+
+		-> AWS S3 / Azure Disk / G Persistant Volumes / External Storage Servers
+		
+		-> 
+
+			1. Raw Data Extraction 				==>  raw data s3/ --> for processing
+			
+			2. Process Data --> v1,v2,v3,v4,v5	==> s3 
+			
+			3. Train the Model 
+			
+			4. Test the Model 	-> Experiment --> 
+			
+				-> Feedback		--> The Accuracy of ML Model will be better with more data. --> 95% 98% 
+				
+								--> Monitoring Tools :
+								
+									--> MLFlow == To perform ML Project Experiments & verify the Model Accuracy
+									
+									--> Infra-Structure Monitoring :
+									
+										- Prometheus/Grafana --> 
+								
+			5. AWS Cli --> to interact with S3 Bucket 
+			
+			6. SDK --> Python program -> boto3 Library  
+			
+			
+			
+	- Version Control System :
+
+		- git 			# To Version control the Source Code (*.py -> UI, API)
+		
+		- dvc 			# To Version Control the Datasets and Process.
+		
+						# DVC Pipeline :
+						
+							Process the data 
+							
+							Train the model
+							
+		- S3 			# To Version Control the Processed Datasets and metadata.
+		
+		- DockerHub 	# To Version Control the Application Images 
+		
+		
+	
+	Managed Services : AWS Sagemaker-ai / Azure / GCP
+		
+	
+	DVC ::::	Data Version Control::		# https://dvc.org/  # https://doc.dvc.org/start
+	
+		==> Maintain the Version of ML Datasets.	
+
+
+		--> Install DVC ???
+		
+			- Prepare Virtual Enviroment 
+			
+				-> Install dvc/mlflow/streamlit/fast-api
+	
+	
+	Launch EC2 Instance ::: 
+	
+		- Ubuntu AMI 22.04v with IAM Role(Access s3) -> 
+
+		- Connect to EC2 Instance
+				
+				- Install :	AWS CLI, Docker Cli, git
+				
+				- Install : Python3, Python3 environment pkg
+			
+		
+
+Login to EC2 Instance :::::
+
+sudo -i 
+
+1️⃣ Update system
+
+sudo apt update -y
+
+
+# To Setup AWS CLI ::::				https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+
+sudo apt install -y unzip curl
+
+2️⃣ Download AWS CLI v2
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+3️⃣ Unzip installer
+unzip awscliv2.zip
+
+4️⃣ Install AWS CLI
+sudo ./aws/install
+
+5️⃣ Verify Installation
+aws --version
+
+
+Expected output:
+
+aws-cli/2.x.x Python/3.x Linux/x86_64
+
+
+✔ AWS CLI installed successfully
+
+
+# To Setup EC2 Instance with AWS ::::
+
+
+
+
+1.2 Install Required Tools
+
+sudo apt update -y 
+
+sudo apt install -y \
+  python3.12 python3.12-venv python3-pip
+  
+  
+
+1.3 Configure AWS CLI
+
+AWS Resources can be accessible using AWS Cli :::
+
+- It is always recommended to use IAM Role to access AWS resources from EC2 Instance.
+
+- AWS Access Key & Secret Key approach is not recommended as per the security policy.
+
+
+	aws configure		# To Configure AWS CLi using AWS User Access Key & Secret Key. 
+
+	Goto to Security Credential tab in IAM Console to create Access Key & Secret Key : 
+
+	AWS User Access Key:  asdfsdf
+
+	AWS User Secret Key:  asdf
+
+	AWS Region : ap-south-1
+	
+	
+Prepare Virtual Enviroment :::
+
+Examples: 
+
+	python3 -m venv venv
+	source venv/bin/activate	
+
+deactivate 
+
+	python3 -m venv loksai_env
+	source loksai_env/bin/activate
+
+deactivate 
+
+# install dvc Package within the Venv.
+
+pip install dvc_s3									# Install DVC-s3 
+
+dvc --version
+
+	
+dvc repro 			# 
+
+
+Prepare a ML Project ::
+
+git init 
+
+dvc init 
+
+git remote add <github_url> origin
+
+git remote -v
+
+
+dvc remote add -d myremote s3://loksai-edu-mlops-0208-bkt
+
+dvc remote list 
+
+git add .
+
+git commit -m "Initialize DVC with S3"
+
+
+vi "Hello" >> raw_dataset.csv
+
+dvc add raw_dataset.csv
+
+
+DVC Pipeline :
+	- Stage1: Process data 
+	
+	- Stage2 : Train the Model (Build)
+	
+		--> Output --> Artifacts  ==> pickle / model.joblib
+
+
+dvc pipeline :
+
+	dvc repro 		# Reproduce 
+	
+	
+Workflow ::::	
+
+	1. DVC is used to manage the Input Dataset for Model Training 
+	
+	2. dvc repro 		# Reproduce  ==> Train the Model 
+
+	3. Trained Model ==> ML Artifacts ==> model.joblib / pickle 
+	
+	4. Used DVC to maintain the Artifacts - S3 
+	
+	5. Use that artifacts and dependencies to create Dockerfile and create Docker Image 
+	
+	6. Publish Docker Image to Container Registry
+	
+	7. Deploy to Kubernetes 
+	
+
+S3 :
+
+	Upon training the Model, 
+	
+	dvc push to push the changes to s3.
+
+
+
+dvc push 
+
+dvc status 
+
+dvc pull 
+
+
+git (vs) dvc 	????
